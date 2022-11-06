@@ -1,0 +1,153 @@
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "one_scalar_two_fermions";
+
+M$Information = {
+  Authors      -> {"Francisco Martinez"}, 
+  Version      -> "1.0",
+  Emails       -> {"fmartinez@student.ethz.ch"}
+};
+
+FeynmanGauge = True;
+
+(* ************************** *)
+(* **** Particle classes **** *)
+(* ************************** *)
+M$ClassesDescription = {
+
+
+  S[200] == {
+    ClassName        -> newscalar,
+    Indices        -> {Index[SU2D]},
+    SelfConjugate    -> False,
+    QuantumNumbers -> {Y -> 7/6},
+    Mass             -> Msnew,
+    FullName        -> "heavy",
+    Width            -> 0
+  },
+
+  F[201] == {
+    ClassName        -> newpsil,
+    SelfConjugate    -> False,
+    QuantumNumbers -> {Y -> 2/3},
+    Mass             -> Msnew,
+    FullName        -> "heavy",
+    Width            -> 0
+  },
+
+  F[202] == {
+    ClassName        -> newpsie,
+    Indices        -> {Index[SU2D]},
+    SelfConjugate    -> False,
+    QuantumNumbers -> {Y -> 1/6},
+    Mass             -> Msnew,
+    FullName        -> "heavy",
+    Width            -> 0
+  }
+
+
+
+
+};
+
+
+
+
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)
+M$Parameters = {
+  
+  
+lamprimel == { 
+    ParameterType     -> Internal, 
+    Indices           -> {Index[Generation]},
+    ComplexParameter  -> True
+  },  
+  
+  
+lamprimee == { 
+    ParameterType     -> Internal,
+    Indices           -> {Index[Generation]},
+    ComplexParameter  -> True
+  },  
+  
+kappaprime == { 
+    ParameterType     -> Internal,
+    ComplexParameter  -> True
+  },
+
+  
+ 
+Msnew == { 
+    ParameterType     -> Internal, 
+    ComplexParameter  -> False
+  }
+  
+  
+};
+
+
+(* ************************** *)
+(* *****   Lagrangian   ***** *)
+(* ************************** *)
+
+
+gotoBFM={G[a__]->G[a]+GQuantum[a],Wi[a__]->Wi[a]+WiQuantum[a],B[a__]->B[a]+BQuantum[a]};
+
+  
+Lkinetic1 := Block[{ii, mu}, DC[newscalarbar[ii],mu] DC[newscalar[ii],mu]]/.gotoBFM; 
+
+Lkinetic2 := Block[{mu}, I*(newpsilbar.Ga[mu].DC[newpsil, mu])]/.gotoBFM;
+
+Lkinetic3 := Block[{mu}, I*(newpsiebar.Ga[mu].DC[newpsie, mu])]/.gotoBFM;
+
+
+   
+Lmasa1 := Block[{ii}, -newscalarbar[ii].newscalar[ii] Msnew^2]; 
+  
+Lmasa2 := Block[{ii,sp1}, -newpsilbar[sp1].newpsil[sp1] Msnew]; 
+
+Lmasa3 := Block[{ii,sp1}, -newpsiebar[sp1, ii].newpsie[sp1, ii] Msnew]; 
+  
+  
+  
+Lleft := Block[{sp1, ii,jj, ff1, yuk},
+  yuk= lamprimel[ff1] LLbar[sp1, ii, ff1].newpsil[sp1].Eps[ii, jj].newscalarbar[jj];
+  yuk+HC[yuk]
+  ];
+
+
+Lright := Block[{sp1, ii, ff1, yuk},
+  yuk= lamprimee[ff1] LRbar[sp1,ff1].newpsie[sp1,ii].newscalarbar[ii];
+  yuk+HC[yuk]
+  ];
+
+Lkappa := Block[{sp1, ii, jj, yuk},
+  yuk= kappaprime newpsilbar[sp1].newpsie[sp1, ii].Eps[ii,jj].Phi[jj];
+  yuk+HC[yuk]
+  ];
+  
+
+Ltot := LSM + Lkinetic1 + Lkinetic2 + Lkinetic3 + Lmasa1 + Lmasa2 + Lmasa3 + Lleft + Lright + Lkappa;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
