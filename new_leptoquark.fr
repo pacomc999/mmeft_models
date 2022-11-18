@@ -1,0 +1,120 @@
+(* ************************** *)
+(* *****  Information   ***** *)
+(* ************************** *)
+M$ModelName = "one_leptoquark";
+
+M$Information = {
+  Authors      -> {"Francisco Martinez"}, 
+  Version      -> "2.0 Lagrangian from EFT interpretation of AMM",
+  Emails       -> {"fmartinez@student.ethz.ch"}
+};
+
+FeynmanGauge = True;
+
+(* ************************** *)
+(* **** Particle classes **** *)
+(* ************************** *)
+M$ClassesDescription = {
+
+
+  S[200] == {
+    ClassName        -> leptoquark,
+    Indices        -> {Index[SU2D], Index[Colour]},
+    SelfConjugate    -> False,
+    QuantumNumbers -> {Y -> 7/6},
+    Mass             -> Msleptoquark,
+    FullName        -> "heavy",
+    Width            -> 0
+  }
+
+};
+
+
+
+
+(* ************************** *)
+(* *****   Parameters   ***** *)
+(* ************************** *)
+M$Parameters = {
+
+  (* External parameters *)
+
+  (* Internal Parameters *)
+  
+  
+lamprimel == { 
+    ParameterType     -> Internal, 
+    Indices           -> {Index[Generation],Index[Generation]},
+    ComplexParameter  -> True
+  },  
+  
+  
+lamprimee == { 
+    ParameterType     -> Internal,
+    Indices           -> {Index[Generation],Index[Generation]},
+    ComplexParameter  -> True
+  },  
+  
+Msleptoquark == { 
+    ParameterType     -> Internal, 
+    ComplexParameter  -> False
+  }
+  
+};
+
+
+(* ************************** *)
+(* *****   Lagrangian   ***** *)
+(* ************************** *)
+
+gotoBFM={G[a__]->G[a]+GQuantum[a],Wi[a__]->Wi[a]+WiQuantum[a],B[a__]->B[a]+BQuantum[a]};
+
+
+Lkineticleptoquark := Block[{ii, cc1, mu},
+  DC[leptoquarkbar[ii,cc1],mu] DC[leptoquark[ii,cc1],mu]]/.gotoBFM; 
+
+Lmasa := Block[{ii,cc1}, -leptoquarkbar[ii,cc1].leptoquark[ii,cc1] Msleptoquark^2
+  ]; 
+
+
+Lleft := Block[{sp1, ii,jj, cc1, ff1, ff2, yuk},
+  yuk= lamprimel[ff1, ff2] URbar[sp1,ff2,cc1].LL[sp1, ii, ff1] Eps[ii, jj] leptoquark[jj, cc1];
+  yuk+HC[yuk]
+  ];
+
+
+Lright := Block[{sp1, ii, cc1, ff1, ff2, yuk},
+  yuk= lamprimee[ff1, ff2] QLbar[sp1,ii,ff2,cc1].LR[sp1,ff1] leptoquark[ii, cc1];
+  yuk+HC[yuk]
+  ];
+
+   
+
+
+
+
+
+
+
+
+Ltot := LSM +Lkineticleptoquark +Lmasa +Lleft +Lright ;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
